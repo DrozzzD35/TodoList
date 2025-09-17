@@ -12,10 +12,9 @@ import java.util.HashMap;
 
 
 public class HelloHandler implements HttpHandler {
-    Manager manager = new Manager(new HashMap<>());
-
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        Manager manager = new Manager(new HashMap<>());
         String response = exchange.getRequestMethod().toUpperCase();
         Gson gson = new Gson();
 
@@ -43,9 +42,12 @@ public class HelloHandler implements HttpHandler {
                 System.out.println("Task создан");
                 System.out.println("Имя: " + task.getName());
                 System.out.println("Описание: " + task.getDescription());
+                System.out.println("Идентификатор: " + task.getId());
+                System.out.println();
                 break;
             }
             case "PUT" -> {
+
             }
             case "DELETE" -> {
                 String query = exchange.getRequestURI().getQuery();
@@ -62,7 +64,7 @@ public class HelloHandler implements HttpHandler {
 
         }
 
-        exchange.getResponseHeaders().add("Content-type", "text/plain; Charset=UTF-8");
+        exchange.getResponseHeaders().add("Content-type", "application/json; Charset=UTF-8");
         byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
         exchange.sendResponseHeaders(200, bytes.length);
 
@@ -72,4 +74,5 @@ public class HelloHandler implements HttpHandler {
 
 
     }
+
 }

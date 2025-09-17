@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Manager {
-    private Map<Integer, Task> tasks = new HashMap();
+    private Map<Integer, Task> tasks;
 
     public Manager(Map<Integer, Task> tasks) {
         this.tasks = tasks;
@@ -24,6 +24,7 @@ public class Manager {
 
     public void createTask(String name, String description) {
         Task task = new Task(name, description);
+        addTask(task);
     }
 
     public void updateTask(Task newTask, int taskId) {

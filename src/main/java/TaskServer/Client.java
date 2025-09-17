@@ -9,12 +9,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class Client {
-    HttpClient client = HttpClient.newHttpClient();
+    HttpClient client;
     Gson gson = new Gson();
     String address = "http://localhost:8080/task";
     URI uri = URI.create(address);
 
     public Client() {
+        client = HttpClient.newHttpClient();
     }
 
     public void getAllTasksResponse() throws IOException, InterruptedException {
@@ -64,6 +65,7 @@ public class Client {
     public void printResponse(HttpResponse<String> response) {
         System.out.println("Код ответа: " + response.statusCode());
         System.out.println("Тело: " + response.body());
+        System.out.println();
     }
 
 
