@@ -1,6 +1,5 @@
 package TaskServer;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Manager {
@@ -41,6 +40,5 @@ public class Manager {
     public void removeTask(int taskId) {
         tasks.remove(taskId);
     }
-
 
 }

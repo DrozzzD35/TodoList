@@ -11,6 +11,12 @@ public class TestClient {
         client.createTask("task3", "task03");
 
         client.getAllTasksResponse();
+        client.getTaskByIdResponse(2);
+
+        client.removeTask(1);
+        System.out.println();
+        System.out.println("==========Список после удаления==========");
+        client.getAllTasksResponse();
 
 
     }
