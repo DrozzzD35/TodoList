@@ -40,9 +40,10 @@ public class Client {
     }
 
     public void getTaskByIdResponse(int id) throws IOException, InterruptedException {
-        String taskId = "?id=" + String.valueOf(id);
+        String taskId = "?id=" + id;
 
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(address + taskId)).GET().build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(address + taskId))
+                .GET().build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -58,7 +59,8 @@ public class Client {
         Task requestTask = new Task(name, description);
         String json = gson.toJson(requestTask);
 
-        HttpRequest request = HttpRequest.newBuilder().uri(uri).POST(HttpRequest.BodyPublishers.ofString(json)).header("Content-Type", "text/plain; Charset=UTF-8").build();
+        HttpRequest request = HttpRequest.newBuilder().uri(uri).POST(HttpRequest.BodyPublishers.ofString(json))
+                .header("Content-Type", "text/plain; Charset=UTF-8").build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         Task responseTask = gson.fromJson(response.body(), Task.class);
@@ -70,9 +72,27 @@ public class Client {
 
     }
 
+    public void updateTask(int currentTaskId, Task task) throws IOException, InterruptedException {
+        String taskId = "?id=" + currentTaskId;
+        String json = gson.toJson(task);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(address + taskId))
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .header("Content-Type", "text/plain; Charset=UTF-8")
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Task responseTask = gson.fromJson(response.body(), Task.class);
+
+        printResponseTask(responseTask, response);
+
+
+    }
+
 
     public void removeTask(int id) throws IOException, InterruptedException {
-                String taskId = "?id=" + String.valueOf(id);
+        String taskId = "?id=" + id;
 
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -81,11 +101,11 @@ public class Client {
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        int responseId = gson.fromJson(response.body(),Integer.class);
+        int responseId = gson.fromJson(response.body(), Integer.class);
 
 
         System.out.println("Метод remove");
-        System.out.println("Задача с идентификатором: "+ responseId + " удалена");
+        System.out.println("Задача с идентификатором: " + responseId + " удалена");
 
     }
 

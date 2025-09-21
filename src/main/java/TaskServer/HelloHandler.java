@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class HelloHandler implements HttpHandler {
@@ -37,8 +38,8 @@ public class HelloHandler implements HttpHandler {
             }
             case "POST" -> {
                 InputStream is = exchange.getRequestBody();
-                String json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-                Task jsonTask = gson.fromJson(json, Task.class);
+                String jsonString = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                Task jsonTask = gson.fromJson(jsonString, Task.class);
 
                 manager.createTask(jsonTask.getName(), jsonTask.getDescription());
                 Task task = manager.getTaskById(jsonTask.getId());
@@ -46,7 +47,19 @@ public class HelloHandler implements HttpHandler {
                 break;
             }
             case "PUT" -> {
+                InputStream is = exchange.getRequestBody();
+                String jsonString = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                Task jsonTask = gson.fromJson(jsonString, Task.class);
 
+                String query = exchange.getRequestURI().getQuery();
+                if (query != null && query.startsWith("id=")) {
+                    int id = Integer.parseInt(query.substring(3));
+                    manager.updateTask(jsonTask, id);
+                }
+
+                response = gson.toJson(jsonTask);
+
+                break;
             }
             case "DELETE" -> {
                 String query = exchange.getRequestURI().getQuery();
