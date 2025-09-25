@@ -12,16 +12,16 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 
 public class Client {
-    HttpClient client;
-    Gson gson = new Gson();
-    String address = "http://localhost:8080/task";
-    URI uri = URI.create(address);
+    private HttpClient client;
+    private Gson gson = new Gson();
+    private String address = "http://localhost:8080/task";
+    private URI uri = URI.create(address);
 
     public Client() {
         client = HttpClient.newHttpClient();
     }
 
-    public void getAllTasksResponse() throws IOException, InterruptedException {
+    public void getAllTasks() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -30,7 +30,7 @@ public class Client {
         Map<Integer, Task> tasks = gson.fromJson(response.body(), type);
 
         if (!tasks.isEmpty()) {
-            System.out.println("Список задач: ");
+            System.out.println("Список всех задач: ");
             for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
                 printResponseTask(entry.getValue(), response);
             }
@@ -60,7 +60,7 @@ public class Client {
         String json = gson.toJson(requestTask);
 
         HttpRequest request = HttpRequest.newBuilder().uri(uri).POST(HttpRequest.BodyPublishers.ofString(json))
-                .header("Content-Type", "text/plain; Charset=UTF-8").build();
+                .header("Content-Type", "application/json; Charset=UTF-8").build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         Task responseTask = gson.fromJson(response.body(), Task.class);
@@ -79,7 +79,7 @@ public class Client {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(address + taskId))
                 .PUT(HttpRequest.BodyPublishers.ofString(json))
-                .header("Content-Type", "text/plain; Charset=UTF-8")
+                .header("Content-Type", "application/json; Charset=UTF-8")
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -97,7 +97,7 @@ public class Client {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(address + taskId))
-                .DELETE().header("Content-Type", "text/plain; Charset=UTF-8")
+                .DELETE().header("Content-Type", "application/json; Charset=UTF-8")
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -114,8 +114,8 @@ public class Client {
         System.out.println("Имя: " + responseTask.getName());
         System.out.println("Описание: " + responseTask.getDescription());
         System.out.println("Идентификатор: " + responseTask.getId());
-        System.out.println("Код ответа: " + response.statusCode());
-        System.out.println("Тело: " + response.body());
+//        System.out.println("Код ответа: " + response.statusCode());
+//        System.out.println("Тело: " + response.body());
         System.out.println();
     }
 

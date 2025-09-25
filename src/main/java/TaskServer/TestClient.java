@@ -1,8 +1,6 @@
 package TaskServer;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TestClient {
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -13,21 +11,22 @@ public class TestClient {
         client.createTask("task3", "task03");
         client.createTask("task4", "task04");
 
-        client.getAllTasksResponse();
+        client.getAllTasks();
         client.getTaskByIdResponse(2);
 
         client.removeTask(1);
         System.out.println();
         System.out.println("==========Список после удаления==========");
-        client.getAllTasksResponse();
+        client.getAllTasks();
 
         System.out.println("==========Обновление задачи==========");
 
-//        Task task = new Task("001", "002");
-//        task.setName("updateName");
-//        client.updateTask(, task);
-//
-//        client.getTaskByIdResponse(3);
+        Task task = new Task("001", "002");
+        task.setName("updateName");
+        client.updateTask(3, task);
+
+        System.out.println();
+        client.getAllTasks();
 
 
     }

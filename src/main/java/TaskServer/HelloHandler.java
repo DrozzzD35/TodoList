@@ -72,12 +72,15 @@ public class HelloHandler implements HttpHandler {
 
 
             }
+            default -> {
+                System.out.println("Нераспознана команда");
+            }
 
         }
 
         exchange.getResponseHeaders().add("Content-type", "application/json; Charset=UTF-8");
         byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
-        exchange.sendResponseHeaders(200, bytes.length);
+//        exchange.sendResponseHeaders(200, bytes.length);
 
         OutputStream os = exchange.getResponseBody();
         os.write(bytes);
