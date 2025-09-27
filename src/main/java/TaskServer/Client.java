@@ -30,9 +30,9 @@ public class Client {
         Map<Integer, Task> tasks = gson.fromJson(response.body(), type);
 
         if (!tasks.isEmpty()) {
-            System.out.println("Список всех задач: ");
+            System.out.println("==========Список всех задач==========");
             for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
-                printResponseTask(entry.getValue(), response);
+                printResponse(entry.getValue(), response);
             }
         }
 
@@ -40,9 +40,7 @@ public class Client {
     }
 
     public void getTaskByIdResponse(int id) throws IOException, InterruptedException {
-        String taskId = "?id=" + id;
-
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(address + taskId))
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(address + "/" + id))
                 .GET().build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -50,7 +48,7 @@ public class Client {
         Task task = gson.fromJson(response.body(), Task.class);
         if (task != null) {
             System.out.println("Задача найдена: ");
-            printResponseTask(task, response);
+            printResponse(task, response);
         }
 
     }
@@ -67,17 +65,16 @@ public class Client {
 
         if (responseTask != null) {
             System.out.println("Задача создана: ");
-            printResponseTask(responseTask, response);
+            printResponse(responseTask, response);
         }
 
     }
 
-    public void updateTask(int currentTaskId, Task task) throws IOException, InterruptedException {
-        String taskId = "?id=" + currentTaskId;
-        String json = gson.toJson(task);
+    public void updateTask(int id, Task updateTask) throws IOException, InterruptedException {
+        String json = gson.toJson(updateTask);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(address + taskId))
+                .uri(URI.create(address + "/" + id))
                 .PUT(HttpRequest.BodyPublishers.ofString(json))
                 .header("Content-Type", "application/json; Charset=UTF-8")
                 .build();
@@ -85,18 +82,15 @@ public class Client {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         Task responseTask = gson.fromJson(response.body(), Task.class);
 
-        printResponseTask(responseTask, response);
+        printResponse(responseTask, response);
 
 
     }
 
 
     public void removeTask(int id) throws IOException, InterruptedException {
-        String taskId = "?id=" + id;
-
-
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(address + taskId))
+                .uri(URI.create(address + "/" + id))
                 .DELETE().header("Content-Type", "application/json; Charset=UTF-8")
                 .build();
 
@@ -104,13 +98,13 @@ public class Client {
         int responseId = gson.fromJson(response.body(), Integer.class);
 
 
-        System.out.println("Метод remove");
+        System.out.println("==========Удаление задачи==========");
         System.out.println("Задача с идентификатором: " + responseId + " удалена");
 
     }
 
 
-    private void printResponseTask(Task responseTask, HttpResponse<String> response) {
+    private void printResponse(Task responseTask, HttpResponse<String> response) {
         System.out.println("Имя: " + responseTask.getName());
         System.out.println("Описание: " + responseTask.getDescription());
         System.out.println("Идентификатор: " + responseTask.getId());

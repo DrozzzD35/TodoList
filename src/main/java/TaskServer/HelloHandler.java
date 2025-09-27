@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Objects;
 
 
 public class HelloHandler implements HttpHandler {
@@ -20,20 +19,28 @@ public class HelloHandler implements HttpHandler {
         String method = exchange.getRequestMethod().toUpperCase();
         Gson gson = new Gson();
         String response = "";
+        int statusCode = 500;
 
         switch (method) {
             case "GET" -> {
-                String query = exchange.getRequestURI().getQuery();
+                String path = exchange.getRequestURI().getPath();
+                String[] parts = path.split("/");
 
-                if (query != null && query.startsWith("id=")) {
-                    int taskId = Integer.parseInt(query.substring(3));
-                    Task task = manager.getTaskById(taskId);
-                    response = gson.toJson(task);
+                try {
+                    String lastPart = parts[parts.length - 1];
+                    if (!lastPart.equals("task")) {
+                        int id = Integer.parseInt(lastPart);
+                        response = gson.toJson(manager.getTaskById(id));
+                        statusCode = 200;
 
-                    break;
+                    } else {
+                        response = gson.toJson(manager.getAllTasks());
+                        statusCode = 200;
+                    }
+                } catch (Exception e) {
+                    response = gson.toJson("Неизвестная команда " + e);
+                    statusCode = 400;
                 }
-                response = gson.toJson(manager.getAllTasks());
-
                 break;
             }
             case "POST" -> {
@@ -41,51 +48,71 @@ public class HelloHandler implements HttpHandler {
                 String jsonString = new String(is.readAllBytes(), StandardCharsets.UTF_8);
                 Task jsonTask = gson.fromJson(jsonString, Task.class);
 
-                manager.createTask(jsonTask.getName(), jsonTask.getDescription());
-                Task task = manager.getTaskById(jsonTask.getId());
-                response = gson.toJson(task);
+                try {
+                    manager.createTask(jsonTask.getName(), jsonTask.getDescription());
+                    Task task = manager.getTaskById(jsonTask.getId());
+                    response = gson.toJson(task);
+                    statusCode = 201;
+                } catch (Exception e) {
+                    response = gson.toJson("Неизвестная команда " + e);
+                    statusCode = 400;
+                }
                 break;
             }
             case "PUT" -> {
                 InputStream is = exchange.getRequestBody();
                 String jsonString = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-                Task jsonTask = gson.fromJson(jsonString, Task.class);
+                Task updateTask = gson.fromJson(jsonString, Task.class);
 
-                String query = exchange.getRequestURI().getQuery();
-                if (query != null && query.startsWith("id=")) {
-                    int id = Integer.parseInt(query.substring(3));
-                    manager.updateTask(jsonTask, id);
+                String path = exchange.getRequestURI().getPath();
+                String[] parts = path.split("/");
+
+                try {
+                    int oldTaskId = Integer.parseInt(parts[parts.length - 1]);
+                    manager.updateTask(updateTask, oldTaskId);
+                    Task oldTask = manager.getTaskById(oldTaskId);
+                    response = gson.toJson(oldTask);
+                    statusCode = 200;
+
+                } catch (NullPointerException e) {
+                    response = gson.toJson("Задача с таким идентификатором не найдена ");
+                    statusCode = 400;
+
                 }
 
-                response = gson.toJson(jsonTask);
 
                 break;
             }
             case "DELETE" -> {
-                String query = exchange.getRequestURI().getQuery();
+                String path = exchange.getRequestURI().getPath();
+                String[] split = path.split("/");
 
-                if (query != null && query.startsWith("id=")) {
-                    int taskId = Integer.parseInt(query.substring(3));
-                    manager.removeTask(taskId);
-                    response = gson.toJson(taskId);
+                try {
+                    int lastPart = Integer.parseInt(split[split.length - 1]);
+                    manager.removeTask(lastPart);
+                    response = gson.toJson(lastPart);
+                    statusCode = 200;
+                } catch (Exception e) {
+                    response = gson.toJson("Неизвестная команда " + e);
+                    statusCode = 400;
                 }
-
-
             }
             default -> {
-                System.out.println("Нераспознана команда");
+                response = gson.toJson("Нераспознана команда");
+                statusCode = 400;
+
             }
 
         }
 
+
         exchange.getResponseHeaders().add("Content-type", "application/json; Charset=UTF-8");
         byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
-//        exchange.sendResponseHeaders(200, bytes.length);
+        exchange.sendResponseHeaders(statusCode, bytes.length);
 
         OutputStream os = exchange.getResponseBody();
         os.write(bytes);
         os.close();
-
 
     }
 

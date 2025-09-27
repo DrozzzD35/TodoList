@@ -27,8 +27,8 @@ public class Manager {
         addTask(task);
     }
 
-    public void updateTask(Task newTask, int taskId) {
-        Task oldTask = getTaskById(taskId);
+    public void updateTask(Task newTask, int oldTaskId) {
+        Task oldTask = getTaskById(oldTaskId);
 
         if (!Objects.equals(newTask.getDescription(), oldTask.getDescription())) {
             oldTask.setDescription(newTask.getDescription());

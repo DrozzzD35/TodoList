@@ -12,9 +12,10 @@ public class TestClient {
         client.createTask("task4", "task04");
 
         client.getAllTasks();
+        System.out.println("==========Получение задачи==========");
         client.getTaskByIdResponse(2);
 
-        client.removeTask(1);
+        client.removeTask(3);
         System.out.println();
         System.out.println("==========Список после удаления==========");
         client.getAllTasks();
@@ -23,7 +24,7 @@ public class TestClient {
 
         Task task = new Task("001", "002");
         task.setName("updateName");
-        client.updateTask(3, task);
+        client.updateTask(4, task);
 
         System.out.println();
         client.getAllTasks();
