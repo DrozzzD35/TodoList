@@ -72,7 +72,7 @@ public class HelloHandler implements HttpHandler {
                     manager.updateTask(updateTask, oldTaskId);
                     Task oldTask = manager.getTaskById(oldTaskId);
                     response = gson.toJson(oldTask);
-                    statusCode = 200;
+                    statusCode = 201;
 
                 } catch (NullPointerException e) {
                     response = gson.toJson("Задача с таким идентификатором не найдена ");
@@ -99,7 +99,7 @@ public class HelloHandler implements HttpHandler {
             }
             default -> {
                 response = gson.toJson("Нераспознана команда");
-                statusCode = 400;
+                statusCode = 501;
 
             }
 
