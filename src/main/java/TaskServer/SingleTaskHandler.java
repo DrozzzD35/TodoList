@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 
-public class HelloHandler implements HttpHandler {
+public class SingleTaskHandler implements HttpHandler {
     Manager manager = new Manager(new HashMap<>());
 
     @Override
@@ -26,43 +26,23 @@ public class HelloHandler implements HttpHandler {
                 String path = exchange.getRequestURI().getPath();
                 String[] parts = path.split("/");
 
+                int id = 0;
                 try {
-                    String lastPart = parts[parts.length - 1];
-                    if (!lastPart.equals("task")) {
-                        int id = Integer.parseInt(lastPart);
-                        response = gson.toJson(manager.getTaskById(id));
-                        statusCode = 200;
-
-                    } else {
-                        response = gson.toJson(manager.getAllTasks());
-                        statusCode = 200;
-                    }
-                } catch (Exception e) {
-                    response = gson.toJson("Неизвестная команда " + e);
-                    statusCode = 400;
-                }
-                break;
-            }
-            case "POST" -> {
-                InputStream is = exchange.getRequestBody();
-                String jsonString = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-                Task jsonTask = gson.fromJson(jsonString, Task.class);
-
-                try {
-                    manager.createTask(jsonTask.getName(), jsonTask.getDescription());
-                    Task task = manager.getTaskById(jsonTask.getId());
+                    id = Integer.parseInt(parts[parts.length - 1]);
+                    Task task = manager.getTaskById(id);
                     response = gson.toJson(task);
-                    statusCode = 201;
-                } catch (Exception e) {
-                    response = gson.toJson("Неизвестная команда " + e);
+                    statusCode = 200;
+
+                } catch (NumberFormatException e) {
+                    response = gson.toJson("Нераспознанный идентификатор: " + id);
                     statusCode = 400;
                 }
-                break;
+
             }
             case "PUT" -> {
                 InputStream is = exchange.getRequestBody();
-                String jsonString = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-                Task updateTask = gson.fromJson(jsonString, Task.class);
+                String jsonTask = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                Task updateTask = gson.fromJson(jsonTask, Task.class);
 
                 String path = exchange.getRequestURI().getPath();
                 String[] parts = path.split("/");
@@ -75,7 +55,11 @@ public class HelloHandler implements HttpHandler {
                     statusCode = 201;
 
                 } catch (NullPointerException e) {
-                    response = gson.toJson("Задача с таким идентификатором не найдена ");
+                    response = gson.toJson("Задача с таким идентификатором не найдена: " + parts[parts.length - 1]);
+                    statusCode = 400;
+
+                } catch (NumberFormatException e) {
+                    response = gson.toJson("Не правильный формат идентификатора задачи: " + parts[parts.length - 1]);
                     statusCode = 400;
 
                 }
@@ -98,7 +82,7 @@ public class HelloHandler implements HttpHandler {
                 }
             }
             default -> {
-                response = gson.toJson("Нераспознана команда");
+                response = gson.toJson("Нераспознанная команда");
                 statusCode = 501;
 
             }

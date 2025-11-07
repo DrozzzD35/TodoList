@@ -27,28 +27,38 @@ public class Client {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         Type type = new TypeToken<Map<Integer, Task>>() {
         }.getType();
-        Map<Integer, Task> tasks = gson.fromJson(response.body(), type);
 
-        if (!tasks.isEmpty()) {
-            System.out.println("==========Список всех задач==========");
-            for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
-                printResponse(entry.getValue(), response);
+        try {
+            Map<Integer, Task> tasks = gson.fromJson(response.body(), type);
+
+            if (!tasks.isEmpty()) {
+                System.out.println("==========Список всех задач==========");
+                for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
+                    printResponse(entry.getValue(), response);
+                }
             }
+
+        } catch (Exception e) {
+            System.out.println(response.body());
         }
 
 
     }
 
     public void getTaskByIdResponse(int id) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(address + "/" + id))
-                .GET().build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(address + "/" + id)).GET().build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        Task task = gson.fromJson(response.body(), Task.class);
-        if (task != null) {
-            System.out.println("Задача найдена: ");
-            printResponse(task, response);
+        try {
+            Task task = gson.fromJson(response.body(), Task.class);
+            if (task.getName() != null) {
+                System.out.println("Задача найдена: ");
+                printResponse(task, response);
+            }
+
+        } catch (Exception e) {
+            System.out.println(response.body());
         }
 
     }
@@ -57,15 +67,21 @@ public class Client {
         Task requestTask = new Task(name, description);
         String json = gson.toJson(requestTask);
 
-        HttpRequest request = HttpRequest.newBuilder().uri(uri).POST(HttpRequest.BodyPublishers.ofString(json))
-                .header("Content-Type", "application/json; Charset=UTF-8").build();
+        HttpRequest request = HttpRequest.newBuilder().uri(uri).POST(HttpRequest.BodyPublishers.ofString(json)).header("Content-Type", "application/json; Charset=UTF-8").build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        Task responseTask = gson.fromJson(response.body(), Task.class);
 
-        if (responseTask != null) {
-            System.out.println("Задача создана: ");
-            printResponse(responseTask, response);
+
+        try {
+            Task responseTask = gson.fromJson(response.body(), Task.class);
+
+            if (responseTask != null) {
+                System.out.println("Задача создана: ");
+                printResponse(responseTask, response);
+            }
+
+        } catch (Exception e) {
+            System.out.println(response.body());
         }
 
     }
@@ -73,33 +89,37 @@ public class Client {
     public void updateTask(int id, Task updateTask) throws IOException, InterruptedException {
         String json = gson.toJson(updateTask);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(address + "/" + id))
-                .PUT(HttpRequest.BodyPublishers.ofString(json))
-                .header("Content-Type", "application/json; Charset=UTF-8")
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(address + "/" + id)).PUT(HttpRequest.BodyPublishers.ofString(json)).header("Content-Type", "application/json; Charset=UTF-8").build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        Task responseTask = gson.fromJson(response.body(), Task.class);
 
-        printResponse(responseTask, response);
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Task responseTask = gson.fromJson(response.body(), Task.class);
+
+            printResponse(responseTask, response);
+
+        } catch (Exception e) {
+            System.out.println("Ошибка в методе обновления");
+        }
 
 
     }
 
 
     public void removeTask(int id) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(address + "/" + id))
-                .DELETE().header("Content-Type", "application/json; Charset=UTF-8")
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(address + "/" + id)).DELETE().header("Content-Type", "application/json; Charset=UTF-8").build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        int responseId = gson.fromJson(response.body(), Integer.class);
 
+        try {
+            int responseId = gson.fromJson(response.body(), Integer.class);
 
-        System.out.println("==========Удаление задачи==========");
-        System.out.println("Задача с идентификатором: " + responseId + " удалена");
+            System.out.println("==========Удаление задачи==========");
+            System.out.println("Задача с идентификатором: " + responseId + " удалена");
+
+        } catch (Exception e) {
+            System.out.println(response.body());
+        }
 
     }
 
