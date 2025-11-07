@@ -24,7 +24,8 @@ public class Client {
     public void getAllTasks() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = client.send(request
+                , HttpResponse.BodyHandlers.ofString());
         Type type = new TypeToken<Map<Integer, Task>>() {
         }.getType();
 
@@ -36,9 +37,12 @@ public class Client {
                 for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
                     printResponse(entry.getValue(), response);
                 }
+            } else {
+                System.out.println("Список задач пуст");
             }
 
         } catch (Exception e) {
+            System.out.println("Не удалось получить задачи " + e);
             System.out.println(response.body());
         }
 
@@ -46,15 +50,17 @@ public class Client {
     }
 
     public void getTaskByIdResponse(int id) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(address + "/" + id)).GET().build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/task/" + id)).GET().build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         try {
             Task task = gson.fromJson(response.body(), Task.class);
-            if (task.getName() != null) {
+            if (response.statusCode() == 201) {
                 System.out.println("Задача найдена: ");
                 printResponse(task, response);
+            } else {
+                System.out.println(response.body());
             }
 
         } catch (Exception e) {
@@ -67,7 +73,11 @@ public class Client {
         Task requestTask = new Task(name, description);
         String json = gson.toJson(requestTask);
 
-        HttpRequest request = HttpRequest.newBuilder().uri(uri).POST(HttpRequest.BodyPublishers.ofString(json)).header("Content-Type", "application/json; Charset=UTF-8").build();
+        HttpRequest request = HttpRequest.newBuilder().uri(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .header("Content-Type",
+                        "application/json; Charset=UTF-8")
+                .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 

@@ -18,15 +18,15 @@ public class SingleTaskHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod().toUpperCase();
         Gson gson = new Gson();
-        String response = "";
-        int statusCode = 500;
+        String path = exchange.getRequestURI().getPath();
+        String[] parts = path.split("/");
+        int statusCode;
+        String response;
 
         switch (method) {
             case "GET" -> {
-                String path = exchange.getRequestURI().getPath();
-                String[] parts = path.split("/");
+                int id;
 
-                int id = 0;
                 try {
                     id = Integer.parseInt(parts[parts.length - 1]);
                     Task task = manager.getTaskById(id);
@@ -34,7 +34,7 @@ public class SingleTaskHandler implements HttpHandler {
                     statusCode = 200;
 
                 } catch (NumberFormatException e) {
-                    response = gson.toJson("Нераспознанный идентификатор: " + id);
+                    response = gson.toJson("Нераспознанный идентификатор");
                     statusCode = 400;
                 }
 
@@ -43,9 +43,6 @@ public class SingleTaskHandler implements HttpHandler {
                 InputStream is = exchange.getRequestBody();
                 String jsonTask = new String(is.readAllBytes(), StandardCharsets.UTF_8);
                 Task updateTask = gson.fromJson(jsonTask, Task.class);
-
-                String path = exchange.getRequestURI().getPath();
-                String[] parts = path.split("/");
 
                 try {
                     int oldTaskId = Integer.parseInt(parts[parts.length - 1]);
@@ -62,22 +59,21 @@ public class SingleTaskHandler implements HttpHandler {
                     response = gson.toJson("Не правильный формат идентификатора задачи: " + parts[parts.length - 1]);
                     statusCode = 400;
 
+                } catch (Exception e) {
+                    response = gson.toJson("Неизвестная ошибка " + e);
+                    statusCode = 400;
                 }
 
-
-                break;
             }
             case "DELETE" -> {
-                String path = exchange.getRequestURI().getPath();
-                String[] split = path.split("/");
 
                 try {
-                    int lastPart = Integer.parseInt(split[split.length - 1]);
+                    int lastPart = Integer.parseInt(parts[parts.length - 1]);
                     manager.removeTask(lastPart);
                     response = gson.toJson(lastPart);
                     statusCode = 200;
                 } catch (Exception e) {
-                    response = gson.toJson("Неизвестная команда " + e);
+                    response = gson.toJson("Неизвестная команда" + e);
                     statusCode = 400;
                 }
             }

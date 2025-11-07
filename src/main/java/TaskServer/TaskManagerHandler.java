@@ -17,9 +17,9 @@ public class TaskManagerHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         Manager manager = new Manager(new HashMap<>());
         String method = exchange.getRequestMethod().toUpperCase();
-        int statusCode = 500;
         Gson gson = new Gson();
-        String response = "";
+        int statusCode;
+        String response;
 
         switch (method) {
             case "GET" -> {
@@ -49,13 +49,13 @@ public class TaskManagerHandler implements HttpHandler {
 
             }
             default -> {
-                response = gson.toJson("Неизвестная команда");
+                response = gson.toJson("Неизвестная команда. Мы находимся в TaskManagerHandler");
                 statusCode = 501;
             }
 
         }
 
-        exchange.getResponseHeaders().add("Content-type", "application/json; Charset=UTF-8");
+        exchange.getResponseHeaders().add("Content-Type", "application/json; Charset=UTF-8");
         byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
 
         if (bytes.length == 0) {
@@ -66,7 +66,6 @@ public class TaskManagerHandler implements HttpHandler {
 
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(bytes);
-            os.close();
         } catch (IOException e) {
             System.out.println("Ошибка при отправке данных с сервера");
         }
