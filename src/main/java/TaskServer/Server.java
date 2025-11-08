@@ -4,15 +4,15 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
 
 public class Server {
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-        SingleTaskHandler singleTaskHandler = new SingleTaskHandler();
-        TaskManagerHandler taskManagerHandler = new TaskManagerHandler();
+        Manager manager = new Manager(new HashMap<>());
 
-        server.createContext("/task/id", singleTaskHandler);
-        server.createContext("/task", taskManagerHandler);
+        server.createContext("/task/", new SingleTaskHandler(manager));
+        server.createContext("/task", new TaskManagerHandler(manager));
 
         server.start();
         System.out.println("Сервер запущен.");

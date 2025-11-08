@@ -12,14 +12,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class TaskManagerHandler implements HttpHandler {
+    Manager manager;
+
+    public TaskManagerHandler(Manager manager) {
+        this.manager = manager;
+    }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        Manager manager = new Manager(new HashMap<>());
         String method = exchange.getRequestMethod().toUpperCase();
         Gson gson = new Gson();
         int statusCode;
         String response;
+
+
 
         switch (method) {
             case "GET" -> {

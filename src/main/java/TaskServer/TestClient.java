@@ -11,9 +11,7 @@ public class TestClient {
         client.createTask("task3", "task03");
         client.createTask("task4", "task04");
 
-        System.out.println("==========Cписок всех задач==========");
         client.getAllTasks();
-        System.out.println();
         System.out.println("==========Получение задачи==========");
         client.getTaskByIdResponse(2);
 
@@ -27,10 +25,10 @@ public class TestClient {
 
         Task task = new Task("001", "002");
         task.setName("updateName");
+        task.setDescription("updateDescription");
         client.updateTask(4, task);
         System.out.println();
 
-        System.out.println("==========Cписок всех задач==========");
         client.getAllTasks();
 
 

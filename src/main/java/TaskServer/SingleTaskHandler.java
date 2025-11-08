@@ -12,7 +12,11 @@ import java.util.HashMap;
 
 
 public class SingleTaskHandler implements HttpHandler {
-    Manager manager = new Manager(new HashMap<>());
+    Manager manager;
+
+    public SingleTaskHandler(Manager manager) {
+        this.manager = manager;
+    }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -68,9 +72,9 @@ public class SingleTaskHandler implements HttpHandler {
             case "DELETE" -> {
 
                 try {
-                    int lastPart = Integer.parseInt(parts[parts.length - 1]);
-                    manager.removeTask(lastPart);
-                    response = gson.toJson(lastPart);
+                    int id = Integer.parseInt(parts[parts.length - 1]);
+                    manager.removeTask(id);
+                    response = gson.toJson(id);
                     statusCode = 200;
                 } catch (Exception e) {
                     response = gson.toJson("Неизвестная команда" + e);
