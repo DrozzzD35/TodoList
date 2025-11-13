@@ -8,16 +8,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 
 
 public class SingleTaskHandler implements HttpHandler {
-    private Manager manager;
+    private InMemoryTaskManager inMemoryTaskManager;
     private static final Gson gson = new Gson();
 
 
-    public SingleTaskHandler(Manager manager) {
-        this.manager = manager;
+    public SingleTaskHandler(InMemoryTaskManager inMemoryTaskManager) {
+        this.inMemoryTaskManager = inMemoryTaskManager;
     }
 
     @Override
@@ -34,7 +33,7 @@ public class SingleTaskHandler implements HttpHandler {
 
                 try {
                     id = Integer.parseInt(parts[parts.length - 1]);
-                    Task task = manager.getTaskById(id);
+                    Task task = inMemoryTaskManager.getTaskById(id);
                     response = gson.toJson(task);
                     statusCode = 200;
 
@@ -51,8 +50,8 @@ public class SingleTaskHandler implements HttpHandler {
 
                 try {
                     int oldTaskId = Integer.parseInt(parts[parts.length - 1]);
-                    manager.updateTask(updateTask, oldTaskId);
-                    Task oldTask = manager.getTaskById(oldTaskId);
+                    inMemoryTaskManager.updateTask(updateTask, oldTaskId);
+                    Task oldTask = inMemoryTaskManager.getTaskById(oldTaskId);
                     response = gson.toJson(oldTask);
                     statusCode = 200;
 
@@ -74,7 +73,7 @@ public class SingleTaskHandler implements HttpHandler {
 
                 try {
                     int id = Integer.parseInt(parts[parts.length - 1]);
-                    manager.removeTask(id);
+                    inMemoryTaskManager.removeTask(id);
                     response = gson.toJson(id);
                     statusCode = 200;
                 } catch (Exception e) {

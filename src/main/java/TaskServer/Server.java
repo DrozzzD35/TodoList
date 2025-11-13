@@ -9,10 +9,10 @@ import java.util.HashMap;
 public class Server {
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-        Manager manager = new Manager(new HashMap<>());
+        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager(new HashMap<>());
 
-        server.createContext("/tasks", new TaskManagerHandler(manager));
-        server.createContext("/tasks/", new SingleTaskHandler(manager));
+        server.createContext("/tasks", new TaskManagerHandler(inMemoryTaskManager));
+        server.createContext("/tasks/", new SingleTaskHandler(inMemoryTaskManager));
 
         server.start();
         System.out.println("Сервер запущен.");

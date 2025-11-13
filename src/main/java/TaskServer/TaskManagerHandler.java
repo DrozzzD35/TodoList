@@ -9,14 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 
 public class TaskManagerHandler implements HttpHandler {
-    private Manager manager;
+    private InMemoryTaskManager inMemoryTaskManager;
     private static final Gson gson = new Gson();
 
-    public TaskManagerHandler(Manager manager) {
-        this.manager = manager;
+    public TaskManagerHandler(InMemoryTaskManager inMemoryTaskManager) {
+        this.inMemoryTaskManager = inMemoryTaskManager;
     }
 
     @Override
@@ -28,7 +27,7 @@ public class TaskManagerHandler implements HttpHandler {
 
         switch (method) {
             case "GET" -> {
-                response = gson.toJson(manager.getAllTasks());
+                response = gson.toJson(inMemoryTaskManager.getAllTasks());
                 statusCode = 200;
 
             }
@@ -38,7 +37,7 @@ public class TaskManagerHandler implements HttpHandler {
 
                 try {
                     Task jsonTask = gson.fromJson(jsonString, Task.class);
-                    Task task = manager.createTask(jsonTask.getName(), jsonTask.getDescription());
+                    Task task = inMemoryTaskManager.createTask(jsonTask.getName(), jsonTask.getDescription());
                     response = gson.toJson(task);
                     statusCode = 201;
 

@@ -5,27 +5,31 @@ import java.util.Map;
 import java.util.Objects;
 //TODO Создать интерфейс. Реализовать Manager через интерфейс
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
     private Map<Integer, Task> tasks;
 
-    public Manager(Map<Integer, Task> tasks) {
+    public InMemoryTaskManager(Map<Integer, Task> tasks) {
         this.tasks = tasks;
     }
 
+    @Override
     public void addTask(Task task) {
         tasks.put(task.getId(), task);
     }
 
+    @Override
     public Map<Integer, Task> getAllTasks() {
 //        return new HashMap<>(tasks);
         return Collections.unmodifiableMap(tasks);
 
     }
 
+    @Override
     public Task getTaskById(int id) {
         return tasks.get(id);
     }
 
+    @Override
     public Task createTask(String name, String description) {
 
         if (name == null || name.isBlank()) {
@@ -40,10 +44,12 @@ public class Manager {
         return task;
     }
 
-    public int createId(){
+    @Override
+    public int createId() {
         return Identity.IDENTITY.createId();
     }
 
+    @Override
     public void updateTask(Task newTask, int oldTaskId) {
         Task oldTask = getTaskById(oldTaskId);
 
@@ -62,6 +68,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void removeTask(int taskId) {
         tasks.remove(taskId);
     }
