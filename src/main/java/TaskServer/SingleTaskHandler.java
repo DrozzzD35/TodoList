@@ -12,7 +12,9 @@ import java.util.HashMap;
 
 
 public class SingleTaskHandler implements HttpHandler {
-    Manager manager;
+    private Manager manager;
+    private static final Gson gson = new Gson();
+
 
     public SingleTaskHandler(Manager manager) {
         this.manager = manager;
@@ -21,7 +23,6 @@ public class SingleTaskHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod().toUpperCase();
-        Gson gson = new Gson();
         String path = exchange.getRequestURI().getPath();
         String[] parts = path.split("/");
         int statusCode;
@@ -53,7 +54,7 @@ public class SingleTaskHandler implements HttpHandler {
                     manager.updateTask(updateTask, oldTaskId);
                     Task oldTask = manager.getTaskById(oldTaskId);
                     response = gson.toJson(oldTask);
-                    statusCode = 201;
+                    statusCode = 200;
 
                 } catch (NullPointerException e) {
                     response = gson.toJson("Задача с таким идентификатором не найдена: " + parts[parts.length - 1]);
@@ -82,8 +83,8 @@ public class SingleTaskHandler implements HttpHandler {
                 }
             }
             default -> {
-                response = gson.toJson("Нераспознанная команда");
-                statusCode = 501;
+                response = gson.toJson("Нераспознанный метод");
+                statusCode = 405;
 
             }
 
@@ -94,9 +95,11 @@ public class SingleTaskHandler implements HttpHandler {
         byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
         exchange.sendResponseHeaders(statusCode, bytes.length);
 
-        OutputStream os = exchange.getResponseBody();
-        os.write(bytes);
-        os.close();
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(bytes);
+        } catch (IOException e) {
+            System.out.println("Ошибка при отправке данных " + e);
+        }
 
     }
 

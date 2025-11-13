@@ -10,6 +10,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
+//TODO Exception не обобщать, так же отредактировать статусКод
+//TODO Вынести в конфиг URL и port, считать данные из файла application.propercis
+//TODO printLN = плохо. Вызывающая сторона печатает (TestClient)
 
 public class Client {
     private HttpClient client;
@@ -42,7 +45,6 @@ public class Client {
                 System.out.println("Список задач пуст");
                 System.out.println("Код ответа: " + response.statusCode());
             }
-
         } catch (Exception e) {
             System.out.println("Не удалось получить задачи " + e);
             System.out.println(response.body());

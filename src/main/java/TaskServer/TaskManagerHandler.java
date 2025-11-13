@@ -12,7 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class TaskManagerHandler implements HttpHandler {
-    Manager manager;
+    private Manager manager;
+    private static final Gson gson = new Gson();
 
     public TaskManagerHandler(Manager manager) {
         this.manager = manager;
@@ -21,7 +22,6 @@ public class TaskManagerHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod().toUpperCase();
-        Gson gson = new Gson();
         int statusCode;
         String response;
 

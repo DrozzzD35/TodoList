@@ -9,7 +9,11 @@ public class Task {
         this.name = name;
         this.description = description;
 
-        this.id = Identity.IDENTITY.createId();
+    }
+
+    /*TODO в менеджере написать присвоение id */
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {

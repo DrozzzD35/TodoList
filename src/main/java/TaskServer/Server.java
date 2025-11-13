@@ -11,8 +11,8 @@ public class Server {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         Manager manager = new Manager(new HashMap<>());
 
-        server.createContext("/task/", new SingleTaskHandler(manager));
-        server.createContext("/task", new TaskManagerHandler(manager));
+        server.createContext("/tasks", new TaskManagerHandler(manager));
+        server.createContext("/tasks/", new SingleTaskHandler(manager));
 
         server.start();
         System.out.println("Сервер запущен.");
