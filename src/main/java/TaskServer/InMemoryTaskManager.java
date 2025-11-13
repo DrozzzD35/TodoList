@@ -3,7 +3,7 @@ package TaskServer;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-//TODO Создать интерфейс. Реализовать Manager через интерфейс
+//TODO Создать интерфейс. Реализовать Manager через интерфейс - Готово
 
 public class InMemoryTaskManager implements TaskManager {
     private Map<Integer, Task> tasks;

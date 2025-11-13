@@ -8,11 +8,12 @@ import java.util.HashMap;
 
 public class Server {
     public static void main(String[] args) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        Config config = new Config();
+        HttpServer server = HttpServer.create(new InetSocketAddress(config.getPort()), 0);
         InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager(new HashMap<>());
 
-        server.createContext("/tasks", new TaskManagerHandler(inMemoryTaskManager));
-        server.createContext("/tasks/", new SingleTaskHandler(inMemoryTaskManager));
+        server.createContext(config.getBasePath(), new TaskManagerHandler(inMemoryTaskManager));
+        server.createContext(config.getBasePath() + "/", new SingleTaskHandler(inMemoryTaskManager));
 
         server.start();
         System.out.println("Сервер запущен.");

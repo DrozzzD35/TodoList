@@ -8,21 +8,21 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 //TODO Exception не обобщать, так же отредактировать статусКод
-//TODO Вынести в конфиг URL и port, считать данные из файла application.propercis
+//TODO Вынести в конфиг URL и port, считать данные из файла application.properties
 //TODO printLN = плохо. Вызывающая сторона печатает (TestClient) - Готово
 
 public class Client {
     private HttpClient client;
     private Gson gson = new Gson();
-    private String address = "http://localhost:8080/tasks";
-    private final URI uriCreate = URI.create(address);
+    Config config = new Config();
 
     public Client() {
         client = HttpClient.newHttpClient();
     }
 
     public HttpResponse<String> getAllTasks() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(uriCreate).GET().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(config.getUrl() + config.getBasePath())).GET().build();
 
 
         return client.send(request
