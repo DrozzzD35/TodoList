@@ -8,10 +8,9 @@ public class Task {
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
-
     }
 
-    /*TODO в менеджере написать присвоение id */
+    //TODO в менеджере написать присвоение id - Готово
     public void setId(Integer id) {
         this.id = id;
     }

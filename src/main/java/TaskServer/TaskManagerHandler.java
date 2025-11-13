@@ -26,7 +26,6 @@ public class TaskManagerHandler implements HttpHandler {
         String response;
 
 
-
         switch (method) {
             case "GET" -> {
                 response = gson.toJson(manager.getAllTasks());
@@ -39,8 +38,7 @@ public class TaskManagerHandler implements HttpHandler {
 
                 try {
                     Task jsonTask = gson.fromJson(jsonString, Task.class);
-                    manager.createTask(jsonTask.getName(), jsonTask.getDescription());
-                    Task task = manager.getTaskById(jsonTask.getId());
+                    Task task = manager.createTask(jsonTask.getName(), jsonTask.getDescription());
                     response = gson.toJson(task);
                     statusCode = 201;
 
@@ -49,7 +47,7 @@ public class TaskManagerHandler implements HttpHandler {
                     statusCode = 400;
 
                 } catch (NullPointerException e) {
-                    response = gson.toJson("Задача не найдена" + e);
+                    response = gson.toJson("Задача не найдена " + e);
                     statusCode = 400;
                 }
 

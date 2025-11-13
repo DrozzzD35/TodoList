@@ -26,7 +26,7 @@ public class Manager {
         return tasks.get(id);
     }
 
-    public void createTask(String name, String description) {
+    public Task createTask(String name, String description) {
 
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Имя задачи не может быть пустым");
@@ -35,7 +35,13 @@ public class Manager {
             description = "";
         }
         Task task = new Task(name, description);
+        task.setId(createId());
         addTask(task);
+        return task;
+    }
+
+    public int createId(){
+        return Identity.IDENTITY.createId();
     }
 
     public void updateTask(Task newTask, int oldTaskId) {

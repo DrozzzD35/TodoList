@@ -16,6 +16,7 @@ public class Server {
 
         server.start();
         System.out.println("Сервер запущен.");
+        System.out.println();
 
 
     }
