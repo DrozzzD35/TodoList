@@ -2,6 +2,7 @@ package TaskServer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class Config {
@@ -13,7 +14,9 @@ public class Config {
         Properties properties = new Properties();
 
         try {
-            properties.load(new FileInputStream("application.properties"));
+            InputStream is =
+                    getClass().getClassLoader().getResourceAsStream("application.properties");
+            properties.load(is);
 
             url = properties.getProperty("server.url");
             port = Integer.parseInt(properties.getProperty("server.port"));

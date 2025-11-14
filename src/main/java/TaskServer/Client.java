@@ -8,13 +8,15 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 //TODO Exception не обобщать, так же отредактировать статусКод
-//TODO Вынести в конфиг URL и port, считать данные из файла application.properties
+//TODO Вынести в конфиг URL и port, считать данные из файла application.properties - Готово
 //TODO printLN = плохо. Вызывающая сторона печатает (TestClient) - Готово
 
 public class Client {
     private HttpClient client;
     private Gson gson = new Gson();
     Config config = new Config();
+    String fullUrl = config.getUrl() + ":" + config.getPort() + config.getBasePath();
+
 
     public Client() {
         client = HttpClient.newHttpClient();
@@ -22,7 +24,7 @@ public class Client {
 
     public HttpResponse<String> getAllTasks() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(config.getUrl() + config.getBasePath())).GET().build();
+                .uri(URI.create(fullUrl)).GET().build();
 
 
         return client.send(request
@@ -30,7 +32,7 @@ public class Client {
     }
 
     public HttpResponse<String> getTaskByIdResponse(int id) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/tasks/" + id)).GET().build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(fullUrl + "/" + id)).GET().build();
 
         return client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -40,7 +42,7 @@ public class Client {
         Task requestTask = new Task(name, description);
         String json = gson.toJson(requestTask);
 
-        HttpRequest request = HttpRequest.newBuilder().uri(uriCreate)
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(fullUrl))
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .header("Content-Type",
                         "application/json; Charset=UTF-8")
@@ -52,13 +54,13 @@ public class Client {
     public HttpResponse<String> updateTask(int id, Task updateTask) throws IOException, InterruptedException {
         String json = gson.toJson(updateTask);
 
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(address + "/" + id)).PUT(HttpRequest.BodyPublishers.ofString(json)).header("Content-Type", "application/json; Charset=UTF-8").build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(fullUrl + "/" + id)).PUT(HttpRequest.BodyPublishers.ofString(json)).header("Content-Type", "application/json; Charset=UTF-8").build();
 
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     public HttpResponse<String> removeTask(int id) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(address + "/" + id))
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(fullUrl + "/" + id))
                 .DELETE()
                 .header("Content-Type", "application/json; Charset=UTF-8").build();
 
