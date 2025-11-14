@@ -31,7 +31,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task createTask(String name, String description) {
-
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Имя задачи не может быть пустым");
         }

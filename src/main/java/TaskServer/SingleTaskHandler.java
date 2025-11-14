@@ -36,13 +36,21 @@ public class SingleTaskHandler implements HttpHandler {
                 try {
                     id = Integer.parseInt(parts[parts.length - 1]);
                     Task task = inMemoryTaskManager.getTaskById(id);
-                    response = gson.toJson(task);
-                    statusCode = 200;
+
+                    if (task == null) {
+                        response = gson
+                                .toJson("Задача с таким идентификатором не найдена "
+                                        + parts[parts.length - 1]);
+                        statusCode = 404;
+
+                    } else {
+                        response = gson.toJson(task);
+                        statusCode = 200;
+                    }
 
                 } catch (NumberFormatException e) {
                     response = gson
-                            .toJson("Задача с таким идентификатором не найдена: "
-                                    + parts[parts.length - 1] + " " + e.getMessage());
+                            .toJson("Неверный JSON " + e.getMessage());
                     statusCode = 404;
                 }
 
@@ -81,9 +89,18 @@ public class SingleTaskHandler implements HttpHandler {
             case "DELETE" -> {
                 try {
                     id = Integer.parseInt(parts[parts.length - 1]);
+                    Task task = inMemoryTaskManager.getTaskById(id);
                     inMemoryTaskManager.removeTask(id);
-                    response = gson.toJson(id);
-                    statusCode = 200;
+
+                    if (task == null) {
+                        response = gson
+                                .toJson("Задача с таким идентификатором не найдена "
+                                        + parts[parts.length - 1]);
+                        statusCode = 404;
+                    } else {
+                        response = gson.toJson(id);
+                        statusCode = 200;
+                    }
 
                 } catch (NumberFormatException e) {
                     response = gson.toJson(e.getMessage());

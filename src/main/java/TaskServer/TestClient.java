@@ -18,10 +18,15 @@ public class TestClient {
         createTask(client.createTask("task2", "task02"));
         createTask(client.createTask("task3", "task03"));
         createTask(client.createTask("task4", "task04"));
+        createTask(client.createTask("task5", ""));
+        createTask(client.createTask("", "task06"));
+
 
         printAllTasks(client.getAllTasks());
+        getTask(client.getTaskByIdResponse(9));
         getTask(client.getTaskByIdResponse(2));
         removeTask(client.removeTask(3));
+        removeTask(client.removeTask(12));
         System.out.println("==========Список после удаления==========");
         printAllTasks(client.getAllTasks());
 
@@ -67,7 +72,9 @@ public class TestClient {
                 System.out.println("==========Задача найдена==========");
                 printTask(response, task);
             } else {
-                System.out.println("Неизвестный статус код " + response.statusCode());
+                System.out.println("==========Задача не найдена========== ");
+                System.out.println("Тело " + response.body());
+                System.out.println("Статус код " + response.statusCode());
             }
             System.out.println();
 

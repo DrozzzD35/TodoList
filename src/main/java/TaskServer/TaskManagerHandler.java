@@ -46,6 +46,9 @@ public class TaskManagerHandler implements HttpHandler {
                             .toJson("Задача не распознана. Неверный JSON "
                                     + e.getMessage());
                     statusCode = 400;
+                } catch (IllegalArgumentException e){
+                    response = gson.toJson(e.getMessage());
+                    statusCode = 400;
                 }
 
             }
