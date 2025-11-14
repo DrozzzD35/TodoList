@@ -29,7 +29,6 @@ public class TaskManagerHandler implements HttpHandler {
             case "GET" -> {
                 response = gson.toJson(inMemoryTaskManager.getAllTasks());
                 statusCode = 200;
-
             }
             case "POST" -> {
                 InputStream is = exchange.getRequestBody();
@@ -37,22 +36,22 @@ public class TaskManagerHandler implements HttpHandler {
 
                 try {
                     Task jsonTask = gson.fromJson(jsonString, Task.class);
-                    Task task = inMemoryTaskManager.createTask(jsonTask.getName(), jsonTask.getDescription());
+                    Task task = inMemoryTaskManager
+                            .createTask(jsonTask.getName(), jsonTask.getDescription());
                     response = gson.toJson(task);
                     statusCode = 201;
 
                 } catch (JsonSyntaxException e) {
-                    response = gson.toJson("Задача не распознана. Возможно неверно указаны данные " + e);
-                    statusCode = 400;
-
-                } catch (NullPointerException e) {
-                    response = gson.toJson("Задача не найдена " + e);
+                    response = gson
+                            .toJson("Задача не распознана. Неверный JSON "
+                                    + e.getMessage());
                     statusCode = 400;
                 }
 
             }
             default -> {
-                response = gson.toJson("Неизвестная команда. Мы находимся в TaskManagerHandler");
+                response = gson
+                        .toJson("Неизвестная команда. Мы находимся в TaskManagerHandler");
                 statusCode = 501;
             }
 

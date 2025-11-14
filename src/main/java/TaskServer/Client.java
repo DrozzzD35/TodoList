@@ -7,7 +7,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-//TODO Exception не обобщать, так же отредактировать статусКод
+//TODO Exception не обобщать, так же отредактировать статусКод - Готово
 //TODO Вынести в конфиг URL и port, считать данные из файла application.properties - Готово
 //TODO printLN = плохо. Вызывающая сторона печатает (TestClient) - Готово
 
@@ -31,8 +31,10 @@ public class Client {
                 , HttpResponse.BodyHandlers.ofString());
     }
 
-    public HttpResponse<String> getTaskByIdResponse(int id) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(fullUrl + "/" + id)).GET().build();
+    public HttpResponse<String> getTaskByIdResponse(int id)
+            throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(fullUrl + "/" + id)).GET().build();
 
         return client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -54,7 +56,10 @@ public class Client {
     public HttpResponse<String> updateTask(int id, Task updateTask) throws IOException, InterruptedException {
         String json = gson.toJson(updateTask);
 
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(fullUrl + "/" + id)).PUT(HttpRequest.BodyPublishers.ofString(json)).header("Content-Type", "application/json; Charset=UTF-8").build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(fullUrl + "/" + id))
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .header("Content-Type", "application/json; Charset=UTF-8").build();
 
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }

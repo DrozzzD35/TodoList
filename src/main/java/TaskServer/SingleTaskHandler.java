@@ -1,6 +1,7 @@
 package TaskServer;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -26,10 +27,11 @@ public class SingleTaskHandler implements HttpHandler {
         String[] parts = path.split("/");
         int statusCode;
         String response;
+        int id;
+
 
         switch (method) {
             case "GET" -> {
-                int id;
 
                 try {
                     id = Integer.parseInt(parts[parts.length - 1]);
@@ -38,17 +40,19 @@ public class SingleTaskHandler implements HttpHandler {
                     statusCode = 200;
 
                 } catch (NumberFormatException e) {
-                    response = gson.toJson("Нераспознанный идентификатор");
-                    statusCode = 400;
+                    response = gson
+                            .toJson("Задача с таким идентификатором не найдена: "
+                                    + parts[parts.length - 1] + " " + e.getMessage());
+                    statusCode = 404;
                 }
 
             }
             case "PUT" -> {
                 InputStream is = exchange.getRequestBody();
                 String jsonTask = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-                Task updateTask = gson.fromJson(jsonTask, Task.class);
 
                 try {
+                    Task updateTask = gson.fromJson(jsonTask, Task.class);
                     int oldTaskId = Integer.parseInt(parts[parts.length - 1]);
                     inMemoryTaskManager.updateTask(updateTask, oldTaskId);
                     Task oldTask = inMemoryTaskManager.getTaskById(oldTaskId);
@@ -56,41 +60,47 @@ public class SingleTaskHandler implements HttpHandler {
                     statusCode = 200;
 
                 } catch (NullPointerException e) {
-                    response = gson.toJson("Задача с таким идентификатором не найдена: " + parts[parts.length - 1]);
-                    statusCode = 400;
+                    response = gson
+                            .toJson("Задача с таким идентификатором не найдена: "
+                                    + parts[parts.length - 1] + " " + e.getMessage());
+                    statusCode = 404;
 
                 } catch (NumberFormatException e) {
-                    response = gson.toJson("Не правильный формат идентификатора задачи: " + parts[parts.length - 1]);
+                    response = gson
+                            .toJson("Не правильный формат идентификатора задачи: "
+                                    + parts[parts.length - 1] + " " + e.getMessage());
                     statusCode = 400;
 
-                } catch (Exception e) {
-                    response = gson.toJson("Неизвестная ошибка " + e);
+                } catch (JsonSyntaxException e) {
+                    response = gson.toJson("Задача не распознана. Неверный JSON "
+                            + e.getMessage());
                     statusCode = 400;
                 }
 
             }
             case "DELETE" -> {
-
                 try {
-                    int id = Integer.parseInt(parts[parts.length - 1]);
+                    id = Integer.parseInt(parts[parts.length - 1]);
                     inMemoryTaskManager.removeTask(id);
                     response = gson.toJson(id);
                     statusCode = 200;
-                } catch (Exception e) {
-                    response = gson.toJson("Неизвестная команда" + e);
+
+                } catch (NumberFormatException e) {
+                    response = gson.toJson(e.getMessage());
                     statusCode = 400;
                 }
             }
             default -> {
-                response = gson.toJson("Нераспознанный метод");
-                statusCode = 405;
+                response = gson.toJson("Неизвестная команда. Мы находимся в SingleTaskHandler");
+                statusCode = 501;
 
             }
 
         }
 
 
-        exchange.getResponseHeaders().add("Content-type", "application/json; Charset=UTF-8");
+        exchange.getResponseHeaders()
+                .add("Content-type", "application/json; Charset=UTF-8");
         byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
         exchange.sendResponseHeaders(statusCode, bytes.length);
 
