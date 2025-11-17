@@ -1,5 +1,4 @@
-package Client;
-
+import Client.Client;
 import TaskServer.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
