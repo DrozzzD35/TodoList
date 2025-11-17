@@ -1,7 +1,7 @@
 package Client;
 
 import TaskServer.Config;
-import TaskServer.Task;
+import Service.Task;
 import com.google.gson.Gson;
 
 import java.io.IOException;

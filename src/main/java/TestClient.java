@@ -1,5 +1,5 @@
 import Client.Client;
-import TaskServer.Task;
+import Service.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

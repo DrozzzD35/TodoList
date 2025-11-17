@@ -1,7 +1,6 @@
-package TaskServer;
+package Service;
 
 import java.util.Map;
-import java.util.Objects;
 
 public interface TaskManager {
 

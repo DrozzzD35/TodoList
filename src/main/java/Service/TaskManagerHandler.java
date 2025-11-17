@@ -1,4 +1,4 @@
-package TaskServer;
+package Service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;

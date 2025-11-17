@@ -1,5 +1,8 @@
 package TaskServer;
 
+import Service.InMemoryTaskManager;
+import Service.SingleTaskHandler;
+import Service.TaskManagerHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;

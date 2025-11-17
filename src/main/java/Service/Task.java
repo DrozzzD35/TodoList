@@ -1,4 +1,4 @@
-package TaskServer;
+package Service;
 
 public class Task {
     private String name;
