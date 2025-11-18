@@ -1,5 +1,7 @@
-package Service;
+package TaskServer;
 
+import Service.InMemoryTaskManager;
+import Service.Task;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
