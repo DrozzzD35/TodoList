@@ -14,10 +14,10 @@ import java.net.http.HttpResponse;
 //TODO printLN = плохо. Вызывающая сторона печатает (TestClient) - Готово
 
 public class Client {
-    private HttpClient client;
-    private Gson gson = new Gson();
-    Config config = new Config();
-    String fullUrl = config.getUrl() + ":" + config.getPort() + config.getBasePath();
+    private final HttpClient client;
+    private final Gson gson = new Gson();
+    private final Config config = new Config();
+    private final String fullUrl = config.getUrl() + ":" + config.getPort() + config.getBasePath();
 
 
     public Client() {
