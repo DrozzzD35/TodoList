@@ -48,8 +48,8 @@ public class Client {
 
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(fullUrl))
                 .POST(HttpRequest.BodyPublishers.ofString(json))
-                .header("Content-Type",
-                        "application/json; Charset=UTF-8")
+                .header("Content-Type"
+                        , "application/json; Charset=UTF-8")
                 .build();
 
         return client.send(request, HttpResponse.BodyHandlers.ofString());
