@@ -20,7 +20,7 @@ public class Client {
     private final String fullUrl = config.getUrl() + ":" + config.getPort() + config.getBasePath();
 
 
-    public Client() {
+    public Client() throws IOException {
         client = HttpClient.newHttpClient();
     }
 

@@ -13,7 +13,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class TaskManagerHandler implements HttpHandler {
-    private InMemoryTaskManager inMemoryTaskManager;
+    private final InMemoryTaskManager inMemoryTaskManager;
     private static final Gson gson = new Gson();
 
     public TaskManagerHandler(InMemoryTaskManager inMemoryTaskManager) {
